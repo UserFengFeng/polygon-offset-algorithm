@@ -60,6 +60,12 @@ public class MathUtil {
         // 两直线不平行，有交点
         double x = (line1[1]*line2[2] - line2[1]*line1[2])/(line1[0]*line2[1] - line2[0]*line1[1]);
         double y = (line2[0]*line1[2] - line1[0]*line2[2])/(line1[0]*line2[1] - line2[0]*line1[1]);
+        if (Double.isNaN(x)) {
+            x = 0.0;
+        }
+        if (Double.isNaN(y)) {
+            y = 0.0;
+        }
         Point point = new Point(x,y);
         return point;
     }
