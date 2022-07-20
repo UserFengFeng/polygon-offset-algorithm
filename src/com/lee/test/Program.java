@@ -1,14 +1,11 @@
 package com.lee.test;
 
-import com.lee.algorithm.OffsetAlgorithm;
-import com.lee.display.MainWindow;
 import com.lee.entity.Point;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Program {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         List<Point> points = Arrays.asList(
                 new Point(1822, 3298),
                 new Point(1855, 3311),
@@ -139,13 +136,15 @@ public class Program {
 
         List<List<Point>> contours = new ArrayList<>();
         contours.add(points);
+        // URL url = new URL("http://192.168.25.16:18001/imgFile//library/254/pcsAlign/f/pic_img/pcsAlign_1_f_calibrated_pcs-1/panorama.webp?1658126890473");
+        BufferedImage fileImage = ImageIO.read(new File("D:\\panorama.png"));
 
 
-        BufferedImage bufferedImage = new BufferedImage(4212, 4806, BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
-        graphics.setBackground(new Color(0, 0, 0, 0));
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setColor(Color.RED);
+        // BufferedImage bufferedImage = new BufferedImage(4212, 4806, BufferedImage.TYPE_4BYTE_ABGR);
+        // Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
+        // graphics.setBackground(new Color(0, 0, 0, 0));
+        // graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // graphics.setColor(Color.RED);
 
         Path2D path2D = new Path2D.Double();
         for (int i = 0; i < contours.size(); i++) {
@@ -165,8 +164,19 @@ public class Program {
             }
 
         }
-        graphics.setColor(Color.GREEN);
-        graphics.draw(path2D);
+        // graphics.setColor(Color.GREEN);
+        // graphics.draw(path2D);
+
+        Area area = new Area(path2D);
+        Rectangle2D bounds2D = area.getBounds2D();
+        double minX = bounds2D.getMinX();
+        double minY = bounds2D.getMinY();
+        BufferedImage subimage = fileImage.getSubimage((int) minX, (int) minY, (int) bounds2D.getWidth(), (int) bounds2D.getHeight());
+        try {
+            ImageIO.write(subimage, "PNG", new File("D:\\project\\subImage1.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // try {
         //     ImageIO.write(bufferedImage, "PNG", new File("D:\\project\\aaaaa1.jpg"));
@@ -174,32 +184,32 @@ public class Program {
         //     e.printStackTrace();
         // }
         // 逐层获取内缩轮廓
-        List<List<Point>> lists = OffsetAlgorithm.offsetAlgorithm(points, 9);
-
-        Path2D path2D2 = new Path2D.Double();
-        for (int i = 0; i < lists.size(); i++) {
-            List<Point> points1 = lists.get(i);
-            for (int i1 = 0; i1 < points1.size(); i1++) {
-                Point point = points1.get(i1);
-                double x = point.getX();
-                double y = point.getY();
-                if(i1 == 0) {
-                    path2D2.moveTo(x, y);
-                } else if (i1 == contours.size() - 1) {
-                    path2D2.lineTo(x, y);
-                    path2D2.closePath();
-                } else {
-                    path2D2.lineTo(x, y);
-                }
-            }
-        }
-        graphics.setColor(Color.red);
-        graphics.draw(path2D2);
-
-        try {
-            ImageIO.write(bufferedImage, "PNG", new File("D:\\project\\aaaaa.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // List<List<Point>> lists = OffsetAlgorithm.offsetAlgorithm(points, 9);
+        //
+        // Path2D path2D2 = new Path2D.Double();
+        // for (int i = 0; i < lists.size(); i++) {
+        //     List<Point> points1 = lists.get(i);
+        //     for (int i1 = 0; i1 < points1.size(); i1++) {
+        //         Point point = points1.get(i1);
+        //         double x = point.getX();
+        //         double y = point.getY();
+        //         if(i1 == 0) {
+        //             path2D2.moveTo(x, y);
+        //         } else if (i1 == contours.size() - 1) {
+        //             path2D2.lineTo(x, y);
+        //             path2D2.closePath();
+        //         } else {
+        //             path2D2.lineTo(x, y);
+        //         }
+        //     }
+        // }
+        // graphics.setColor(Color.red);
+        // graphics.draw(path2D2);
+        //
+        // try {
+        //     ImageIO.write(bufferedImage, "PNG", new File("D:\\project\\aaaaa.jpg"));
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 }

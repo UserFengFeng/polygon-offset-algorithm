@@ -43,6 +43,9 @@ public class ArithUtil {
     public static double div(double value1, double value2){
         double res = 0.0;
         try {
+            if (Math.abs(value2 - value1) <= 0.0) {
+                return res;
+            }
             res = div(value1, value2, DEF_DIV_SCALE);
         }catch (IllegalAccessException e){
             e.printStackTrace();
