@@ -44,7 +44,7 @@ public class ArithUtil {
         double res = 0.0;
         try {
             if (Math.abs(value2 - value1) <= 0.0) {
-                return res;
+                value2 = 1;
             }
             res = div(value1, value2, DEF_DIV_SCALE);
         }catch (IllegalAccessException e){
