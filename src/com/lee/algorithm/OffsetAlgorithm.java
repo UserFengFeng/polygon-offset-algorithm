@@ -8,7 +8,15 @@ import com.lee.util.ArithUtil;
 import com.lee.util.MathUtil;
 import com.lee.util.OffsetUtil;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class OffsetAlgorithm {
 
@@ -259,6 +267,56 @@ public class OffsetAlgorithm {
             }
         }
         return null;
+    }
+
+    /**
+     * 內缩外扩后轮廓自测
+     * @return
+     * */
+    public static void testOffsetAlgorithm(BufferedImage bufferedImage, Graphics2D graphics, List<Point> outLineList, List<List<Point>> offsetPoints ) {
+        Path2D path2D = new Path2D.Double();
+        for (int i = 0; i < outLineList.size(); i++) {
+            Point point = outLineList.get(i);
+            double x = point.getX();
+            double y = point.getY();
+            if (i == 0) {
+                path2D.moveTo(x, y);
+            } else if (i == outLineList.size() - 1) {
+                path2D.lineTo(x, y);
+                path2D.closePath();
+            } else {
+                path2D.lineTo(x, y);
+            }
+        }
+
+        Path2D offsetPath2D = new Path2D.Double();
+        for (int i = 0; i < offsetPoints.size(); i++) {
+            List<Point> points1 = offsetPoints.get(i);
+            for (int i1 = 0; i1 < points1.size(); i1++) {
+                Point point = points1.get(i1);
+                double x = point.getX();
+                double y = point.getY();
+                if (i1 == 0) {
+                    offsetPath2D.moveTo(x, y);
+                } else if (i1 == points1.size() - 1) {
+                    offsetPath2D.lineTo(x, y);
+                    offsetPath2D.closePath();
+                } else {
+                    offsetPath2D.lineTo(x, y);
+                }
+            }
+        }
+        Area area1 = new Area(path2D);
+        graphics.draw(area1);
+        graphics.setColor(Color.GREEN);
+
+        graphics.fill(offsetPath2D);
+        graphics.setColor(Color.GREEN);
+        try {
+            ImageIO.write(bufferedImage, "PNG", new File("./outLineOffset.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
